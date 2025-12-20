@@ -1,0 +1,31 @@
+# Render deployment configuration for RAG System backend
+# Deploy to Render: https://render.com
+
+services:
+  - type: web
+    name: rag-system-backend
+    runtime: python
+    pythonVersion: 3.10
+    buildCommand: pip install -r requirements.txt
+    startCommand: python main.py
+    envVars:
+      - key: BACKEND_HOST
+        value: 0.0.0.0
+      - key: BACKEND_PORT
+        value: 8000
+      - key: DEBUG
+        value: false
+      - key: GEMINI_API_KEY
+        sync: false  # Set this in Render dashboard
+      - key: CHROMA_DB_PATH
+        value: ./chroma_db
+      - key: EMBEDDING_MODEL
+        value: sentence-transformers/all-MiniLM-L6-v2
+      - key: CHUNK_SIZE
+        value: 400
+      - key: CHUNK_OVERLAP
+        value: 80
+      - key: TOP_K_RETRIEVAL
+        value: 5
+      - key: CONFIDENCE_THRESHOLD
+        value: 0.5
