@@ -320,37 +320,65 @@ Provide a helpful answer as RAG Assistant:
         }
     
     def _mock_generate_answer(self, query: str, retrieved_chunks: List[Tuple[str, dict, float]]) -> str:
-        """Generate answer from context without LLM (for testing)."""
+        """Generate a well-formatted answer from context without LLM."""
         if not retrieved_chunks:
             return "No relevant information found in the documents."
         
         try:
-            context_list = []
-            for i in range(min(3, len(retrieved_chunks))):
-                if i < len(retrieved_chunks):
-                    chunk_item = retrieved_chunks[i]
-                    if chunk_item is not None:
-                        if len(chunk_item) > 0:
-                            chunk_content = chunk_item[0]
-                            if chunk_content is not None:
-                                context_list.append(str(chunk_content)[:500])
+            # Extract content from chunks with metadata
+            sections = []
+            for i, chunk_item in enumerate(retrieved_chunks[:3]):
+                if chunk_item and len(chunk_item) > 0:
+                    text = str(chunk_item[0]).strip()
+                    metadata = chunk_item[1] if len(chunk_item) > 1 else {}
+                    doc_name = metadata.get('document_name', 'Document')
+                    page = metadata.get('page_number', 1)
+                    
+                    # Clean up the text - remove page markers and extra whitespace
+                    import re
+                    text = re.sub(r'\[PAGE \d+\]', '', text)
+                    text = re.sub(r'\s+', ' ', text).strip()
+                    
+                    if text:
+                        sections.append({
+                            'text': text[:600],
+                            'doc': doc_name,
+                            'page': page
+                        })
             
-            if len(context_list) == 0:
+            if not sections:
                 return "No relevant information found in the documents."
             
-            full_context = "\n\n".join(context_list)
-            context_snippet = full_context[:300]
+            # Build a nicely formatted response
             query_lower = query.lower()
             
-            if any(word in query_lower for word in ["what", "explain", "describe"]):
-                result = f"Based on the documents: {context_snippet}... This information is relevant to your question about '{query}'."
-            elif any(word in query_lower for word in ["how", "method", "process"]):
-                result = f"The documents describe the following approach: {context_snippet}... This relates to how '{query}' is handled."
-            elif any(word in query_lower for word in ["why", "reason", "cause"]):
-                result = f"According to the documents: {context_snippet}... This explains the reasons behind '{query}'."
+            # Create summary based on query type
+            if any(word in query_lower for word in ["what", "summary", "about", "contain", "document"]):
+                intro = "**Document Summary:**\n\n"
+            elif any(word in query_lower for word in ["how", "method", "process", "approach"]):
+                intro = "**Methodology & Approach:**\n\n"
+            elif any(word in query_lower for word in ["why", "reason", "cause", "purpose"]):
+                intro = "**Key Findings:**\n\n"
             else:
-                result = f"From the documents: {context_snippet}... This information addresses your question about '{query}'."
+                intro = "**Relevant Information:**\n\n"
+            
+            # Format the content
+            content_parts = []
+            for i, section in enumerate(sections):
+                text = section['text']
+                # Truncate at sentence boundary if possible
+                if len(text) > 400:
+                    last_period = text[:400].rfind('.')
+                    if last_period > 200:
+                        text = text[:last_period + 1]
+                    else:
+                        text = text[:400] + "..."
+                
+                content_parts.append(f"{text}\n\n*(Source: {section['doc']}, Page {section['page']})*")
+            
+            result = intro + "\n\n---\n\n".join(content_parts)
             
             return result
+            
         except Exception as e:
             return f"Error processing documents: {str(e)}"
