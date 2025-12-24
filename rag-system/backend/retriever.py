@@ -26,8 +26,10 @@ class VectorRetriever:
         """
         self.vectorizer = TfidfVectorizer(
             max_features=5000,
-            stop_words='english',
-            ngram_range=(1, 2)
+            stop_words=None,  # Don't remove stop words - helps with general queries
+            ngram_range=(1, 2),
+            min_df=1,
+            sublinear_tf=True
         )
         self.chunks = []  # Store chunks in memory
         self.chunk_vectors = None
@@ -41,8 +43,10 @@ class VectorRetriever:
         self.is_fitted = False
         self.vectorizer = TfidfVectorizer(
             max_features=5000,
-            stop_words='english',
-            ngram_range=(1, 2)
+            stop_words=None,
+            ngram_range=(1, 2),
+            min_df=1,
+            sublinear_tf=True
         )
         print("✓ Collection cleared successfully")
     
@@ -82,6 +86,7 @@ class VectorRetriever:
             List of (text, metadata, similarity_score) tuples
         """
         if not self.is_fitted or len(self.chunks) == 0:
+            print(f"[RETRIEVER] No chunks available. is_fitted={self.is_fitted}, chunks={len(self.chunks)}")
             return []
         
         # Transform query using fitted vectorizer
@@ -93,13 +98,15 @@ class VectorRetriever:
         # Get top-k indices
         top_indices = np.argsort(similarities)[::-1][:top_k]
         
-        # Format results
+        # Format results - return top chunks even with low similarity
         retrieved = []
         for idx in top_indices:
-            if similarities[idx] > 0:  # Only include if there's some similarity
-                chunk = self.chunks[idx]
-                retrieved.append((chunk['text'], chunk['metadata'], float(similarities[idx])))
+            chunk = self.chunks[idx]
+            score = float(similarities[idx])
+            # Include chunk even with 0 similarity for general queries
+            retrieved.append((chunk['text'], chunk['metadata'], max(score, 0.1)))
         
+        print(f"[RETRIEVER] Found {len(retrieved)} chunks for query")
         return retrieved
     
     def rerank_mmr(self, query: str, retrieved_chunks: List[Tuple[str, dict, float]], 

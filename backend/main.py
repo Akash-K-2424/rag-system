@@ -1,3 +1,9 @@
+""""
+GET  /health  → {status, vector_db_ready, embedding_model_ready}
+POST /upload  → Upload PDF → {filename, chunks_created, total_tokens}
+POST /chat    → {query} → {answer, citations, confidence, retrieved_chunks}
+"""
+
 """
 FastAPI backend for RAG system.
 Exposes REST endpoints for document upload and querying.

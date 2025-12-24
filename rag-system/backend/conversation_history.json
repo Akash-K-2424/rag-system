@@ -295,5 +295,39 @@
         "citations": 0
       }
     }
+  ],
+  "session_1766562669079_0031x6fq9": [
+    {
+      "role": "user",
+      "content": "what is there in the document",
+      "timestamp": "2025-12-24T13:21:19.259716",
+      "metadata": {}
+    },
+    {
+      "role": "assistant",
+      "content": "No relevant information found in the documents.",
+      "timestamp": "2025-12-24T13:21:19.578647",
+      "metadata": {
+        "confidence": 0.4,
+        "citations": 0
+      }
+    }
+  ],
+  "session_1766562764963_xqapdgj1f": [
+    {
+      "role": "user",
+      "content": "what is there in the document",
+      "timestamp": "2025-12-24T13:23:05.072931",
+      "metadata": {}
+    },
+    {
+      "role": "assistant",
+      "content": "Based on the documents: expected impact. After the choice is implemented, continuous monitoring is conducted to measure performance and determine whether adjustments are necessary. Technology plays a crucial role in modern decision making, with decision support systems enabling real-time data analysis, simulation models, a... This information is relevant to your question about 'what is there in the document'.",
+      "timestamp": "2025-12-24T13:23:05.477525",
+      "metadata": {
+        "confidence": 0.95,
+        "citations": 5
+      }
+    }
   ]
 }
