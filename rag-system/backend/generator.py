@@ -199,10 +199,14 @@ Provide a well-formatted answer with clear sections and bullet points:"""
             if not sections:
                 return "No relevant information found in the documents."
             
-            # Build formatted response
-            response_parts = ["**Document Overview**\n"]
-            response_parts.append("Based on the uploaded document, here are the key points:\n")
-            response_parts.append("\n**Key Information**\n")
+            # Build formatted response with proper line breaks
+            response_parts = []
+            response_parts.append("**Document Overview**")
+            response_parts.append("")
+            response_parts.append("Based on the uploaded document, here are the key points:")
+            response_parts.append("")
+            response_parts.append("**Key Information**")
+            response_parts.append("")
             
             for i, text in enumerate(sections):
                 # Extract meaningful sentences
@@ -210,7 +214,8 @@ Provide a well-formatted answer with clear sections and bullet points:"""
                 for sentence in sentences[:2]:  # Take first 2 sentences per chunk
                     sentence = sentence.strip()
                     if len(sentence) > 30 and len(sentence) < 300:
-                        response_parts.append(f"• {sentence}\n")
+                        response_parts.append(f"• {sentence}")
+                        response_parts.append("")  # Empty line after each bullet
             
             return "\n".join(response_parts)
             
