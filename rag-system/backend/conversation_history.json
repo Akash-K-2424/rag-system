@@ -346,5 +346,37 @@
         "citations": 4
       }
     }
+  ],
+  "session_1766563420759_ej628naes": [
+    {
+      "role": "user",
+      "content": "What is there in the document",
+      "timestamp": "2025-12-24T13:33:54.470608",
+      "metadata": {}
+    },
+    {
+      "role": "assistant",
+      "content": "**Document Summary:** \u2022 expected impact. After the choice is implemented, continuous monitoring is conducted to measure performance and determine whether adjustments are necessary. Technology plays a crucial role in modern decision making, with decision support systems enabling real-time data analysis, simulation models, and scenario testing. \u2022 clude identifying a problem, gathering relevant information, analyzing possible solutions, and selecting the most appropriate course of action. Historically, decision-making models have evolved from purely rational frameworks to more comprehensive approaches that consider human emotions, uncertainties, and limitations. \u2022 nvolves a collaborative approach where team members contribute insights and expertise. The decision is then finalized based on evaluated outcomes, feasibility, and expected impact. After the choice is implemented, continuous monitoring is conducted to measure performance and determine whether adjustments are necessary.",
+      "timestamp": "2025-12-24T13:33:55.010227",
+      "metadata": {
+        "confidence": 0.95,
+        "citations": 5
+      }
+    },
+    {
+      "role": "user",
+      "content": "What is there in the document",
+      "timestamp": "2025-12-24T13:34:14.001278",
+      "metadata": {}
+    },
+    {
+      "role": "assistant",
+      "content": "**Document Summary:** \u2022 t -learn library [17], a widely used open -source machine learning library in Python. To optimize the performance of the Random Forest models, a systematic hyperparameter tuning approach was adopted using Grid Search with Cross -Validation . Hyperparameters Tu ned: n_estimators : The number of trees in the forest. \u2022 ehensive suite of tools for building and deploying machine learning models on molecular data [21]. It supports a wide range of featurization methods, model architectures (including graph convolutional networks), and evaluation metrics, facilitating rapid prototyping and development of predictive models. \u2022 . DATA COLLECTION AND PREPROCESSING Accurate and diverse datasets are fundamental for training robust machine learning models in cheminformatics. For this study, two prominent public datasets were utilized: AqSolDB for aqueous solubility prediction and Tox21 for toxicity prediction. A.",
+      "timestamp": "2025-12-24T13:34:14.149304",
+      "metadata": {
+        "confidence": 0.95,
+        "citations": 4
+      }
+    }
   ]
 }

@@ -48,19 +48,32 @@ RULES:
 - NEVER mention Google, Gemini, OpenAI, GPT, Claude, or any AI company
 - Answer based ONLY on the provided document context
 
-RESPONSE FORMAT:
-- Give clear, well-structured answers
-- Use bullet points or numbered lists when appropriate
-- Keep paragraphs short and readable
-- Do NOT include source citations like "(Source: ...)" in your answer
-- Citations are handled separately by the system
+RESPONSE FORMAT (VERY IMPORTANT):
+1. Start with a brief 1-2 sentence overview
+2. Use proper bullet points with "•" or "-" for lists
+3. Organize information into clear sections with **bold headers**
+4. Each bullet point should be a complete, clear sentence
+5. Do NOT include raw source citations in your text
+6. Keep the response well-organized and easy to read
+
+Example format:
+**Overview**
+Brief summary of the document.
+
+**Key Topics**
+• First key point explained clearly
+• Second key point explained clearly
+
+**Methods/Findings**
+• Important method or finding
+• Another important detail
 {history_section}
 DOCUMENT CONTEXT:
 {context_text}
 
 USER QUESTION: {query}
 
-Provide a clear, helpful answer:"""
+Provide a well-formatted answer with clear sections and bullet points:"""
         return prompt
 
     def _calculate_confidence(self, query: str, answer: str, retrieved_chunks: List[Tuple[str, dict, float]]) -> float:
@@ -175,33 +188,31 @@ Provide a clear, helpful answer:"""
         
         try:
             sections = []
-            for chunk_item in retrieved_chunks[:3]:
+            for chunk_item in retrieved_chunks[:4]:
                 if chunk_item and len(chunk_item) > 0:
                     text = str(chunk_item[0]).strip()
                     text = re.sub(r'\[PAGE \d+\]', '', text)
                     text = re.sub(r'\s+', ' ', text).strip()
-                    if text:
-                        sections.append(text[:500])
+                    if text and len(text) > 50:
+                        sections.append(text)
             
             if not sections:
                 return "No relevant information found in the documents."
             
-            query_lower = query.lower()
-            if any(word in query_lower for word in ["what", "summary", "about", "document"]):
-                intro = "**Document Summary:**\n\n"
-            elif any(word in query_lower for word in ["how", "method", "process"]):
-                intro = "**Methodology:**\n\n"
-            else:
-                intro = "**Key Information:**\n\n"
+            # Build formatted response
+            response_parts = ["**Document Overview**\n"]
+            response_parts.append("Based on the uploaded document, here are the key points:\n")
+            response_parts.append("\n**Key Information**\n")
             
-            content = []
-            for text in sections:
-                if len(text) > 350:
-                    last_period = text[:350].rfind('.')
-                    text = text[:last_period + 1] if last_period > 150 else text[:350] + "..."
-                content.append(f"• {text}")
+            for i, text in enumerate(sections):
+                # Extract meaningful sentences
+                sentences = re.split(r'(?<=[.!?])\s+', text)
+                for sentence in sentences[:2]:  # Take first 2 sentences per chunk
+                    sentence = sentence.strip()
+                    if len(sentence) > 30 and len(sentence) < 300:
+                        response_parts.append(f"• {sentence}\n")
             
-            return intro + "\n\n".join(content)
+            return "\n".join(response_parts)
             
         except Exception as e:
             return f"Error processing documents: {str(e)}"
